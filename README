@@ -79,7 +79,7 @@ Note the auto-generated class names, allowing you to use 'resourceful' naming co
 
 Nice and consistent, isn't it? And compact, too:
 
-  <% create_table(:type => 'DiningTable') %>
+  <% create_table :attributes => {:type => 'DiningTable'} %>
   
   # will render:
   <form action="/tables" method="post" class="create table create_table">
@@ -87,7 +87,7 @@ Nice and consistent, isn't it? And compact, too:
     <button type="submit">Add</button>
   </form>
   
-  <% search_tables(:parameters => {:order => 'name'}) %>
+  <% search_tables :parameters => {:order => 'name'} %>
    
   # will render:
   <form action="/tables" method="get" class="index tables index_tables search search_tables">
@@ -101,6 +101,7 @@ This is just to give you a taste of what is possible. For more examples please r
 == Common options
 
 * <code>:label</code> specifies the content of the link tag in link helpers, and of the button tag in form helpers. If <code>:label</code> is omitted, the helpers will use a default label
+* <code>:attributes</code> allows for specifying resource attributes to send with the request (using bracket syntax), via url query parameters in link helpers, and via hidden fields in form helpers
 * <code>:parameters</code> allows for specifying additional parameters to send with the request, via url query parameters in link helpers, and via hidden fields in form helpers
 * For block-less create_resource and update_resource helpers, the <code>:attributes</code> option is used to specify resource attributes to be sent with the request
 * All other options(such as <code>:id</code> and <code>:title</code>) are applied to the form in form helpers and to the link in link helpers
