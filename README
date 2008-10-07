@@ -1,4 +1,4 @@
-= ResourcefulViews 0.1
+= ResourcefulViews 0.2
 
 ResourcefulViews aims to take RESTful conventions beyond controllers and into views by extending the 'map.resources' method to install a comprehensive vocabulary of resource-oriented view helpers
 
@@ -132,23 +132,25 @@ If the helpers are crowding your namespace, or if you just don't like the short 
   
 == Tests
 
-ResourcefulViews comes with en extensive rspec test suite: <code>rake spec:plugins PLUGIN=resourceful_views</code>
+ResourcefulViews comes with en extensive rspec test suite: <code>rake spec:plugins PLUGIN=resourceful_views</code>. The test suite might also be a good place to look for more usage examples
 
 
 == Plans
   
-ResourcefulViews 0.1 is an experimental release. If you decide to give it a spin, please be aware that future versions might introduce incompatible syntax changes.
+ResourcefulViews 0.2 is an experimental release. If you decide to give it a spin, please be aware that future versions might introduce incompatible syntax changes.
 
 The plugin is all about the power of conventions, and about maximizing their benefits. Consequently, I have no plans to give it the flexibiliy to handle every non-standard situation out there. There are always the standard Rails form/link helpers to fall back to if more flexibility is needed. However, here are a couple of features that I could see being useful:
 
-* There are situations, especially in lists, where the auto-generated classnames seem very verbose, so it will likely be possible to turn them on/off for individual helpers, or in lists only.
 * It will likely be possible to configure defaults for options like <code>:label</code> or <code>:title</code>
 * Add support for more recent routing code syntax such as <code>:has_many</code>
 * Add support for custom member/collection routes
 * Add support for using custom form builders with form helpers
-* Refactor to make code more dry, rely less on giant string evaluations and to make it more hackable
+* Refactor to make code more DRY, rely less on giant string evaluations and to make it more hackable
 
 
+== Feedback
+
+Please report bugs and suggest improvements at http://resourceful_views.lighthouseapp.com
   
 
 == Known problems
