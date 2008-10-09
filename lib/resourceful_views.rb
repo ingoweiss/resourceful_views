@@ -27,6 +27,7 @@ class ResourcefulViews
     build_edit_helper(resource)
     build_destroy_helper(resource)
     build_list_helpers(resource)
+    build_table_helpers(resource)
     build_create_helper(resource)
     build_update_helper(resource)
     install_helpers
@@ -344,8 +345,41 @@ class ResourcefulViews
       end
     end_eval
   end
+   
   
-
+  
+  # Build the table helpers
+  #
+  # === Examples
+  #
+  #   <% user_table do %>
+  #     ...
+  #   <%- end -%>
+  # 
+  #   renders:
+  # 
+  #   <table class="user_table">
+  #     ...
+  #   </table>
+  # 
+  def build_table_helpers(resource)
+    @module.module_eval <<-end_eval
+      def #{resource.singular}_table(opts={}, &block)
+        content = capture(&block)
+        opts[:class] = ResourcefulViews.resourceful_classnames('#{resource.singular}_table', *(opts.delete(:class) || '').split)
+        concat(content_tag(:table, content, opts), block.binding)
+      end
+      def #{resource.singular}_row(*args, &block)
+        opts = args.extract_options!
+        opts[:class] = ResourcefulViews.resourceful_classnames('#{resource.singular}', *(opts.delete(:class) || '').split)
+        opts[:id] = '#{resource.singular}_' + args.first.id.to_s unless args.empty?
+        content = capture(&block)
+        concat(content_tag(:tr, content, opts), block.binding)
+      end
+    end_eval
+  end
+  
+  
 
   # Build the 'create_[resource]' helper
   #
