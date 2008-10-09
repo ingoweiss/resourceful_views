@@ -318,37 +318,22 @@ class ResourcefulViews
   #     ...
   #   </ul>
   # 
-  #   <% the_table_list do %>
+  #   <% table_list :ordered => true do %>
   #     ...
   #   <% end %>
   # 
   #   renders:
   # 
-  #   <ul id="table_list">
+  #   <ol class="table_list">
   #     ...
-  #   </ul>
+  #   </ol>
   # 
   def build_list_helpers(resource)
     @module.module_eval <<-end_eval
       def #{resource.singular}_list(opts={}, &block)
         content = capture(&block)
         opts[:class] = ResourcefulViews.resourceful_classnames('#{resource.singular}_list', *(opts.delete(:class) || '').split)
-        concat(content_tag(:ul, content, opts), block.binding)
-      end
-      def the_#{resource.singular}_list(opts={}, &block)
-        content = capture(&block)
-        opts[:id] = '#{resource.singular}_list'
-        concat(content_tag(:ul, content, opts), block.binding)
-      end
-      def ordered_#{resource.singular}_list(opts={}, &block)
-        content = capture(&block)
-        opts[:class] = ResourcefulViews.resourceful_classnames('#{resource.singular}_list', *(opts.delete(:class) || '').split)
-        concat(content_tag(:ol, content, opts), block.binding)
-      end
-      def the_ordered_#{resource.singular}_list(opts={}, &block)
-        content = capture(&block)
-        opts[:id] = '#{resource.singular}_list'
-        concat(content_tag(:ol, content, opts), block.binding)
+        concat(content_tag((opts[:ordered] ? :ol : :ul), content, opts), block.binding)
       end
       def #{resource.singular}_item(*args, &block)
         opts = args.extract_options!

@@ -33,39 +33,9 @@ describe 'resource_list' do
     _erbout.should have_tag('ul#dining_list', 'some-content')
   end
   
-end
-
-describe 'the_resource_list' do
-  
-  before do
-    ActionController::Routing::Routes.draw do |map|
-      map.resources :tables
-    end
-    @view = ActionView::Base.new
-  end
-  
-  it "should render a unordered list with ID 'resource_list'" do
+  it "should create an ordered list if :ordered => true is used" do
     _erbout = ''
-    @view.the_table_list do
-       _erbout << 'some-content'
-    end
-    _erbout.should have_tag('ul#table_list', 'some-content')
-  end
-  
-end
-
-describe 'ordered_resource_list' do
-  
-  before do
-    ActionController::Routing::Routes.draw do |map|
-      map.resources :tables
-    end
-    @view = ActionView::Base.new
-  end
-  
-  it "should render a ordered list with CLASS 'resource_list'" do
-    _erbout = ''
-    @view.ordered_table_list do
+    @view.table_list(:ordered => true) do
        _erbout << 'some-content'
     end
     _erbout.should have_tag('ol.table_list', 'some-content')
@@ -73,24 +43,6 @@ describe 'ordered_resource_list' do
   
 end
 
-describe 'the_ordered_resource_list' do
-  
-  before do
-    ActionController::Routing::Routes.draw do |map|
-      map.resources :tables
-    end
-    @view = ActionView::Base.new
-  end
-  
-  it "should render a ordered list with ID 'resource_list'" do
-    _erbout = ''
-    @view.the_ordered_table_list do
-       _erbout << 'some-content'
-    end
-    _erbout.should have_tag('ol#table_list', 'some-content')
-  end
-  
-end
 
 describe 'resource_item' do
   
