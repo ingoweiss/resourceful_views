@@ -528,7 +528,7 @@ class ResourcefulViews
     
    # include the module (loaded with helper methods) into ActionView::Base
   def install_helpers # :nodoc:
-    ActionView::Base.send! :include, @module
+    ActionView::Base.send :include, @module
   end
   
   protected
