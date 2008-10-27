@@ -79,7 +79,7 @@ Note the auto-generated class names, allowing you to use 'resourceful' naming co
 
 Nice and consistent, isn't it? And compact, too:
 
-  <% create_table :attributes => {:type => 'DiningTable'} %>
+  <% create_table :with => {:type => 'DiningTable'} %>
   
   # will render:
   <form action="/tables" method="post" class="create table create_table">
@@ -101,7 +101,7 @@ This is just to give you a taste of what is possible. For more examples please r
 == Common options
 
 * <code>:label</code> specifies the content of the link tag in link helpers, and of the button tag in form helpers. If <code>:label</code> is omitted, the helpers will use a default label
-* <code>:attributes</code> allows for specifying resource attributes to send with the request (using bracket syntax), via url query parameters in link helpers, and via hidden fields in form helpers
+* <code>:with</code> allows for specifying resource attributes to send with the request (using bracket syntax), via url query parameters in link helpers, and via hidden fields in form helpers. This option used to be named <code>:attributes</code>, and currently both will work.
 * <code>:parameters</code> allows for specifying additional parameters to send with the request, via url query parameters in link helpers, and via hidden fields in form helpers
 * For block-less create_resource and update_resource helpers, the <code>:attributes</code> option is used to specify resource attributes to be sent with the request
 * All other options(such as <code>:id</code> and <code>:title</code>) are applied to the form in form helpers and to the link in link helpers

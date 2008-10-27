@@ -40,12 +40,25 @@ describe 'update_resource with plural resource' do
     markup.should have_tag('form input[type=hidden][name=_method][value=put]')
   end
   
-  it "should render hidden fields for passed-in attributes" do
+  it "should render hidden fields for passed-in attributes (via :with)" do
+    markup = @view.update_table(@table, :with => {:category => 'dining', :material => 'wood'})
+    markup.should have_tag('form') do
+      with_tag("input[type=hidden][name='table[category]'][value=dining]")
+      with_tag("input[type=hidden][name='table[material]'][value=wood]")
+    end
+  end
+  
+  it "should render hidden fields for passed-in attributes (via :attributes)" do
     markup = @view.update_table(@table, :attributes => {:category => 'dining', :material => 'wood'})
     markup.should have_tag('form') do
       with_tag("input[type=hidden][name='table[category]'][value=dining]")
       with_tag("input[type=hidden][name='table[material]'][value=wood]")
     end
+  end
+  
+  it "should issue a deprecation warning if passing in attributes via :attributes" do
+    ResourcefulViews.should_receive(:deprecation_warning)
+    @view.update_table(@table, :attributes => {:category => 'dining', :material => 'wood'})
   end
   
   it "should render a submit button with default label 'Save'" do
@@ -252,9 +265,8 @@ describe 'update_resource with singular nested resource and block' do
   end
   
   it "should pick up resource attributes from an instance variable with the resource's name" do     
-    pending('trouble getting assigns to work here')
     @top = mock('top', :material => 'linoleum')
-    @view.assigns = {:top => @top} 
+    @view.instance_variable_set(:@top, @top) 
     _erbout = ''
     @view.update_table_top(@table) do |form|
        _erbout << form.text_field(:material)

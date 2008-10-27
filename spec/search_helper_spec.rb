@@ -39,8 +39,7 @@ describe 'search_resource with plural resource' do
   end
   
   it "should fill in the instance variable @query as the query value" do
-    pending('Trouble getting assigns to work here')
-    @view.stub!(:assigns).and_return({:query => 'dining'})
+    @view.instance_variable_set(:@query, 'dining')
     markup = @view.search_tables
     markup.should have_tag('input[type=text][name=query][value=dining]')
   end
@@ -147,8 +146,7 @@ describe 'search_resource with plural nested resource' do
   end
   
   it "should fill in the instance variable @query as the query value" do
-    pending('Trouble getting assigns to work here')
-    @view.stub!(:assigns).and_return({:query => 'dining'})
+    @view.instance_variable_set(:@query, 'dining')
     markup = @view.search_table_legs(@table)
     markup.should have_tag('input[type=text][name=query][value=dining]')
   end

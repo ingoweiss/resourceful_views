@@ -44,6 +44,10 @@ class ResourcefulViews
     install_helpers
   end
   
+  def self.deprecation_warning(msg)
+    RAILS_DEFAULT_LOGGER.warn('ResourcefulViews deprecation warning: ' + msg)
+  end
+  
   
   protected
   
@@ -188,17 +192,30 @@ class ResourcefulViews
   # 
   # === Examples
   # 
-  #   <% new_table %>
+  #   <%= new_table %>
   #
   #   renders:
   # 
   #   <a href="/tables/new" class="new table new_table">New</a>
   #
-  #   <% new_table_top(@table, :label => 'Add a top', :id => 'add_button') %>
+  #   <%= new_table_top(@table, :label => 'Add a top', :id => 'add_button') %>
   # 
   #   renders:
   # 
   #   <a href="/tables/1/top/new" id="add_button" class="new top new_top">Add a top</a>
+  #
+  #   <%- new_table :with => {:name => 'Ingo'} do |f| %>
+  #     <%= f.text_area :description %>
+  #     <%= submit_button 'Save' %>
+  #   <%- end %>
+  #
+  #   renders:
+  #
+  #   <form action="/tables/new" method="get" class="new table new_table">
+  #     <input type="hidden" name="table[name]" value="Ingo" />
+  #     <textarea name="table[description]" value="" />
+  #     <button type="submit">Save</button>
+  #   </form>
   #
   def build_new_helper(resource)
     helper_name = "new_#{resource.name_prefix}#{resource.singular}#{@@link_helpers_suffix}"
@@ -208,7 +225,9 @@ class ResourcefulViews
         opts = args.extract_options!
         opts[:class] = ResourcefulViews.resourceful_classnames('#{resource.singular}', 'new', *(opts.delete(:class) || '').split)
         parameters = opts.delete(:parameters) || {}
-        parameters.merge!(opts.delete(:attributes).inject({}){|attributes, (key, value)| attributes['#{resource.singular}[' + key.to_s + ']'] = value; attributes}) if opts[:attributes]
+        opts[:with] = opts.delete(:attributes) and ResourcefulViews.deprecation_warning('Please use :with instead of :attributes') if opts[:attributes]
+        resource_attributes = opts.delete(:with) || {}
+        parameters.merge!(resource_attributes.inject({}){|attributes, (key, value)| attributes['#{resource.singular}[' + key.to_s + ']'] = value; attributes}) if resource_attributes
         if block_given?
           opts[:method] = :get
           args_for_fields_for = ['#{resource.singular}']
@@ -385,7 +404,7 @@ class ResourcefulViews
   #
   # === Examples without block
   #
-  #   <% create_table_top(@table, :attributes => {:material => 'Mahogany'}) %>
+  #   <% create_table_top(@table, :with => {:material => 'Mahogany'}) %>
   #
   #   renders:
   #
@@ -423,7 +442,8 @@ class ResourcefulViews
     @module.module_eval <<-end_eval
       def #{helper_name}(*args, &block)
         opts = args.extract_options!
-        resource_attributes = opts.delete(:attributes) || {}
+        opts[:with] = opts.delete(:attributes) and ResourcefulViews.deprecation_warning('Please use :with instead of :attributes') if opts[:attributes]
+        resource_attributes = opts.delete(:with) || {}
         parameters = opts.delete(:parameters) || {}
         if block_given?
           args_for_fields_for = ['#{resource.singular}']
@@ -462,26 +482,26 @@ class ResourcefulViews
   #
   # === Examples without block
   #
-  #   <% update_table(@table, :title => 'My new title') %>
+  #   <% update_table(@table, :with => {:name => 'Ingo'}) %>
   #
   #   renders:
   #
   #   <form action="/tables/1" class="table update update_table" method="post">
   #     <input type="hidden" name="_method" value="put" />
-  #     <input type="hidden" name="table[title]" value="My new title" />
+  #     <input type="hidden" name="table[name]" value="Ingo" />
   #     <button type="submit">Save</button>
   #   </form>
   #
   # === Examples with block
   #
   #   <% update_table(@table) do |form| %>
-  #     <%= form.text_field :title %>
+  #     <%= form.text_field :name %>
   #     <%= submit_button 'Save' %>
   #   <% end %>
   #
   #   <form action="/tables/1" class="table update update_table" method="post">
   #     <input type="hidden" name="_method" value="put" />
-  #     <input type="text" name="table[title]" value="My title" />
+  #     <input type="text" name="table[name]" value="Ingo" />
   #     <button type="submit">Save</button>
   #   </form>
   #
@@ -506,7 +526,8 @@ class ResourcefulViews
         else
           opts = args.extract_options!
           label = opts.delete(:label) || 'Save'
-          resource_attributes = opts.delete(:attributes) || {}
+          opts[:with] = opts.delete(:attributes) and ResourcefulViews.deprecation_warning('Please use :with instead of :attributes') if opts[:attributes]
+          resource_attributes = opts.delete(:with) || {}
           opts_for_button = opts.delete(:button) || {}
           opts_for_button.merge!(:type => 'submit')
           opts[:class] = ResourcefulViews.resourceful_classnames('#{resource.singular}', 'update', *(opts.delete(:class) || '').split)
@@ -528,7 +549,7 @@ class ResourcefulViews
     
    # include the module (loaded with helper methods) into ActionView::Base
   def install_helpers # :nodoc:
-    ActionView::Base.send :include, @module
+    ActionView::Base.send! :include, @module
   end
   
   protected

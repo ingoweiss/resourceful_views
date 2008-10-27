@@ -34,8 +34,21 @@ describe 'create_resource with plural resource' do
     markup.should have_tag('form[action=/tables]')
   end
   
-  it "should render hidden fields for passed-in attributes" do
+  it "should render hidden fields for passed-in attributes (via :attributes)" do
     markup = @view.create_table(:attributes => {:category => 'dining', :material => 'linoleum'})
+    markup.should have_tag('form.create_table') do
+      with_tag("input[type=hidden][name='table[category]'][value=dining]")
+      with_tag("input[type=hidden][name='table[material]'][value=linoleum]")
+    end
+  end
+  
+  it "should should issue a deprecation warning when passing in attributes via :attributes (instead of :with)" do
+    ResourcefulViews.should_receive(:deprecation_warning)
+    @view.create_table(:attributes => {:category => 'dining', :material => 'linoleum'})
+  end
+  
+  it "should render hidden fields for passed-in attributes (via :with)" do
+    markup = @view.create_table(:with => {:category => 'dining', :material => 'linoleum'})
     markup.should have_tag('form.create_table') do
       with_tag("input[type=hidden][name='table[category]'][value=dining]")
       with_tag("input[type=hidden][name='table[material]'][value=linoleum]")
@@ -126,13 +139,30 @@ describe 'create_resource with plural resource and block' do
     _erbout.should have_tag('input[type=hidden][name=mode][value=wizard]')
   end
   
-  it "should render hidden fields for passed-in attributes" do
+  it "should render hidden fields for passed-in attributes (via :attributes)" do
     _erbout = ''
     @view.create_table(:attributes => {:material => 'wood'}) do |form|
        _erbout << form.text_field(:category)
     end
     _erbout.should have_tag("input[type=hidden][name='table[material]'][value=wood]")
   end
+  
+  it "should should issue a deprecation warning when passing in attributes via :attributes (instead of :with)" do
+    ResourcefulViews.should_receive(:deprecation_warning)
+    _erbout = ''
+    @view.create_table(:attributes => {:material => 'wood'}) do |form|
+       _erbout << form.text_field(:category)
+    end
+  end
+  
+  it "should render hidden fields for passed-in attributes (via :with)" do
+    _erbout = ''
+    @view.create_table :with => {:material => 'wood'} do |form|
+       _erbout << form.text_field(:category)
+    end
+    _erbout.should have_tag("input[type=hidden][name='table[material]'][value=wood]")
+  end
+  
   
 end
 
@@ -170,7 +200,7 @@ describe 'create_resource with plural nested resource' do
   end
   
   it "should render hidden fields for passed-in attributes" do
-    markup = @view.create_table_leg(@table, :attributes => {:material => 'metal'})
+    markup = @view.create_table_leg(@table, :with => {:material => 'metal'})
     markup.should have_tag('form') do
       with_tag("input[type=hidden][name='leg[material]'][value=metal]")
     end
@@ -284,7 +314,7 @@ describe 'create_resource for singular nested resource' do
   end
   
   it "should render hidden fields for passed-in attributes" do
-    markup = @view.create_table_top(@table, :attributes => {:material => 'wood'})
+    markup = @view.create_table_top(@table, :with => {:material => 'wood'})
     markup.should have_tag('form') do
       with_tag("input[type=hidden][name='top[material]'][value=wood]")
     end
