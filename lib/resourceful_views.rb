@@ -1,6 +1,7 @@
 class ResourcefulViews
   
   cattr_accessor :form_helpers_suffix, :link_helpers_suffix
+  cattr_accessor :helpers
   
   def initialize # :nodoc:    
     @module ||= Module.new
@@ -30,6 +31,7 @@ class ResourcefulViews
     build_table_helpers(resource)
     build_create_helper(resource)
     build_update_helper(resource)
+    memorize_helpers(resource)
     install_helpers
   end
   
@@ -41,11 +43,17 @@ class ResourcefulViews
     build_destroy_helper(resource)
     build_create_helper(resource)
     build_update_helper(resource)
+    memorize_helpers(resource)
     install_helpers
   end
   
-  def self.deprecation_warning(msg)
+  def self.deprecation_warning(msg) # :nodoc:
     RAILS_DEFAULT_LOGGER.warn('ResourcefulViews deprecation warning: ' + msg)
+  end
+  
+  def memorize_helpers(resource) # :nodoc:
+    @@helpers ||= {}
+    @@helpers["#{resource.name_prefix}#{resource.plural} at #{resource.path}"] = @module.instance_methods
   end
   
   
