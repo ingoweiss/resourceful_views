@@ -62,6 +62,20 @@ describe 'destroy_resource with plural resource' do
     end
   end
   
+  it "should allow sending additional parameters via :sending" do
+    markup = @view.destroy_table(@table, :sending => {:return_to => 'url'})
+    markup.should have_tag('form.destroy_table') do
+      with_tag('input[type=hidden][name=return_to][value=url]')
+    end
+  end
+  
+  it "should allow sending additional parameters via :parameters (legacy)" do
+    markup = @view.destroy_table(@table, :parameters => {:return_to => 'url'})
+    markup.should have_tag('form.destroy_table') do
+      with_tag('input[type=hidden][name=return_to][value=url]')
+    end
+  end
+  
 end
 
 

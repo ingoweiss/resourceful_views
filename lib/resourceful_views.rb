@@ -320,9 +320,14 @@ class ResourcefulViews
         opts_for_button[:title] = opts.delete(:title) if opts[:title]
         opts[:class] = ResourcefulViews.resourceful_classnames('#{resource.singular}', 'destroy', *(opts.delete(:class) || '').split)
         opts[:method] = :post
-        opts[:action] = #{resource.name_prefix}#{resource.singular}_path(*args) 
+        opts[:action] = #{resource.name_prefix}#{resource.singular}_path(*args)
+        opts[:sending] = opts.delete(:parameters) and ResourcefulViews.deprecation_warning('Please use :sending instead of :parameters') if opts[:parameters]
+        parameters = opts.delete(:sending) || {} 
         content_tag('form', opts) do
           hidden_field_tag(:_method, :delete, :id => nil) +
+          parameters.collect{|key, value| 
+            hidden_field_tag(key, value, :id => nil)
+          }.join +
           token_tag.to_s +
           content_tag(:button, label, opts_for_button)
         end
@@ -452,7 +457,8 @@ class ResourcefulViews
         opts = args.extract_options!
         opts[:with] = opts.delete(:attributes) and ResourcefulViews.deprecation_warning('Please use :with instead of :attributes') if opts[:attributes]
         resource_attributes = opts.delete(:with) || {}
-        parameters = opts.delete(:parameters) || {}
+        opts[:sending] = opts.delete(:parameters) and ResourcefulViews.deprecation_warning('Please use :sending instead of :parameters') if opts[:parameters]
+        parameters = opts.delete(:sending) || {}
         if block_given?
           args_for_fields_for = ['#{resource.singular}']
           args_for_fields_for.push(args.pop) if args.length > #{number_of_expected_args}

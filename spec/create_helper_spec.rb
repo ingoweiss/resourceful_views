@@ -122,6 +122,8 @@ describe 'create_resource with plural resource and block' do
     _erbout.should have_tag("form.create.table input[type=text][name='table[category]']")
   end
   
+  it "should allow using a custom form builder"
+  
   it "should be able to pick up the resource's attributes from the model passed as last argument" do
     table = mock('table', :category => 'dining')
     _erbout = ''
@@ -133,10 +135,26 @@ describe 'create_resource with plural resource and block' do
   
   it "should render hidden fields for passed-in parameters" do
     _erbout = ''
+    @view.create_table(:sending => {:mode => 'wizard'}) do |form|
+       _erbout << form.text_field(:category)
+    end
+    _erbout.should have_tag('input[type=hidden][name=mode][value=wizard]')
+  end
+  
+  it "should allow passing in parameters via :parameters option (legacy)" do
+    _erbout = ''
     @view.create_table(:parameters => {:mode => 'wizard'}) do |form|
        _erbout << form.text_field(:category)
     end
     _erbout.should have_tag('input[type=hidden][name=mode][value=wizard]')
+  end
+  
+  it "should issue a deprecation warning when passing in parameters via :parameters" do
+    _erbout = ''
+    ResourcefulViews.should_receive(:deprecation_warning)
+    @view.create_table(:attributes => {:material => 'wood'}) do |form|
+       # something
+    end
   end
   
   it "should render hidden fields for passed-in attributes (via :attributes)" do
@@ -151,7 +169,7 @@ describe 'create_resource with plural resource and block' do
     ResourcefulViews.should_receive(:deprecation_warning)
     _erbout = ''
     @view.create_table(:attributes => {:material => 'wood'}) do |form|
-       _erbout << form.text_field(:category)
+       # something
     end
   end
   
