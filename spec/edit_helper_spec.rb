@@ -39,10 +39,21 @@ describe 'edit_resource with plural resource' do
     markup.should have_tag('a', 'Change')
   end
   
-  it "should allow passing additional parameters to the named route helper via the :parameters option" do
+  it "should allow passing additional parameters to the named route helper via the :sending option" do
+    @view.should_receive(:edit_table_path).with(@table, :my_param => 'my_value').and_return('/tables/1/edit?my_param=my_value')
+    markup = @view.edit_table(@table, :sending => {:my_param => 'my_value'})
+    markup.should have_tag('a.edit_table[href=/tables/1/edit?my_param=my_value]')
+  end
+  
+  it "should allow passing additional parameters to the named route helper via the :parameters option (legacy)" do
     @view.should_receive(:edit_table_path).with(@table, :my_param => 'my_value').and_return('/tables/1/edit?my_param=my_value')
     markup = @view.edit_table(@table, :parameters => {:my_param => 'my_value'})
     markup.should have_tag('a.edit_table[href=/tables/1/edit?my_param=my_value]')
+  end
+  
+  it "should issue a deprecation warning when passing in parameters via :parameters" do
+    ResourcefulViews.should_receive(:deprecation_warning)
+    @view.edit_table(@table, :parameters => {:my_param => 'my_value'})
   end
   
   it "should allow for setting the title attribute of the link via the :title option" do

@@ -76,6 +76,37 @@ describe 'destroy_resource with plural resource' do
     end
   end
   
+  it "should issue a deprecation warning when passing in parameters vie :parameters" do
+    ResourcefulViews.should_receive(:deprecation_warning)
+    @view.destroy_table(@table, :parameters => {:return_to => 'url'})
+  end
+  
+end
+
+
+
+describe 'destroy_resource with plural resource and block' do
+
+  before do
+    ResourcefulViews.form_helpers_suffix = nil
+    ActionController::Routing::Routes.draw do |map|
+      map.resources :tables
+    end
+    @view = ActionView::Base.new
+    @view.stub!(:protect_against_forgery?).and_return(false)
+    @view.stub!(:table_path).and_return('/tables/1')
+    @table = mock('table', :to_param => 1)
+  end
+  
+  it "should render a 'destroy_table' form" do
+    pending
+    _erbout = ''
+    @view.destroy_table(@table) do |form|
+       _erbout << 'some-content'
+    end
+    _erbout.should have_tag('form.destroy.table.destroy_table', 'some-content')
+  end
+  
 end
 
 

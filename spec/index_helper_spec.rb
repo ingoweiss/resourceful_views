@@ -49,10 +49,21 @@ describe 'index_resource with plural resource' do
     markup.should have_tag('a#back_button')
   end
   
+  it "should allow passing additional parameters to the named route helper via the :sending option" do
+    @view.should_receive(:tables_path).with(:my_param => 'my_value').and_return('/tables?my_param=my_value')
+    markup = @view.index_tables(:sending => {:my_param => 'my_value'})
+    markup.should have_tag('a[href=/tables?my_param=my_value]')
+  end
+  
   it "should allow passing additional parameters to the named route helper via the :parameters option" do
     @view.should_receive(:tables_path).with(:my_param => 'my_value').and_return('/tables?my_param=my_value')
     markup = @view.index_tables(:parameters => {:my_param => 'my_value'})
     markup.should have_tag('a[href=/tables?my_param=my_value]')
+  end
+  
+  it "should issue a deprecation warning when passing in parameters with :parameters" do
+    ResourcefulViews.should_receive(:deprecation_warning)
+    @view.index_tables(:parameters => {:my_param => 'my_value'})
   end
   
 end

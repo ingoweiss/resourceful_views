@@ -101,9 +101,8 @@ This is just to give you a taste of what is possible. For more examples please r
 == Common options
 
 * <code>:label</code> specifies the content of the link tag in link helpers, and of the button tag in form helpers. If <code>:label</code> is omitted, the helpers will use a default label
-* <code>:with</code> allows for specifying resource attributes to send with the request (using bracket syntax), via url query parameters in link helpers, and via hidden fields in form helpers. This option used to be named <code>:attributes</code>, and currently both will work.
-* <code>:parameters</code> allows for specifying additional parameters to send with the request, via url query parameters in link helpers, and via hidden fields in form helpers
-* For block-less create_resource and update_resource helpers, the <code>:attributes</code> option is used to specify resource attributes to be sent with the request
+* <code>:with</code> allows for specifying resource attributes to send with the request (using bracket syntax), via url query parameters in link helpers, and via hidden fields in form helpers (the old form of the option - <code>:attributes</code> - will continue to work for a while)
+* <code>:sending</code> allows for specifying additional parameters to send with the request, via url query parameters in link helpers, and via hidden fields in form helpers (the old form of the option - <code>:parameters</code> - will continue to work for a while)                                
 * All other options(such as <code>:id</code> and <code>:title</code>) are applied to the form in form helpers and to the link in link helpers
 * To apply options to the button tag instead of the form tag in form helpers, make the options hash the value of the <code>:button</code> option (<code>:button => {:id => 'logout_button'}</code>)
 * both the <code>create_resource</code> and the <code>update_resource</code> helpers support passing in a 'template' model as the last argument that is passed on to the 'fields_for' helper
@@ -133,19 +132,6 @@ If the helpers are crowding your namespace, or if you just don't like the short 
 == Tests
 
 ResourcefulViews comes with en extensive rspec test suite: <code>rake spec:plugins PLUGIN=resourceful_views</code>. The test suite might also be a good place to look for more usage examples
-
-
-== Plans
-  
-ResourcefulViews 0.2 is an experimental release. If you decide to give it a spin, please be aware that future versions might introduce incompatible syntax changes.
-
-The plugin is all about the power of conventions, and about maximizing their benefits. Consequently, I have no plans to give it the flexibiliy to handle every non-standard situation out there. There are always the standard Rails form/link helpers to fall back to if more flexibility is needed. However, here are a couple of features that I could see being useful:
-
-* It will likely be possible to configure defaults for options like <code>:label</code> or <code>:title</code>
-* Add support for more recent routing code syntax such as <code>:has_many</code>
-* Add support for custom member/collection routes
-* Add support for using custom form builders with form helpers
-* Refactor to make code more DRY, rely less on giant string evaluations and to make it more hackable
 
 
 == Feedback

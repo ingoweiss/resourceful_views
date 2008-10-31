@@ -84,7 +84,8 @@ class ResourcefulViews
         label = opts.delete(:label) || 'Index'
         custom_classes = opts.delete(:class) || ''
         opts[:class] = ResourcefulViews.resourceful_classnames('#{resource.plural}', 'index', *custom_classes.split)
-        args << opts.delete(:parameters) if opts[:parameters]
+        opts[:sending] = opts.delete(:parameters) and ResourcefulViews.deprecation_warning('Please use :sending instead of :parameters') if opts[:parameters]
+        args << opts.delete(:sending) if opts[:sending]
         link_to(label, #{resource.name_prefix}#{resource.plural}_path(*args), opts)
       end
     end_eval
@@ -278,7 +279,8 @@ class ResourcefulViews
         opts = args.extract_options!
         label = opts.delete(:label) || 'Edit'
         opts[:class] = ResourcefulViews.resourceful_classnames('#{resource.singular}', 'edit', *(opts.delete(:class) || '').split)
-        args << opts.delete(:parameters) if opts[:parameters]
+        opts[:sending] = opts.delete(:parameters) and ResourcefulViews.deprecation_warning('Please use :sending instead of :parameters') if opts[:parameters]
+        args << opts.delete(:sending) if opts[:sending]
         link_to(label, edit_#{resource.name_prefix}#{resource.singular}_path(*args), opts)
       end
     end_eval
