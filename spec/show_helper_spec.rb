@@ -39,10 +39,21 @@ describe 'show_resource with plural resource' do
     markup.should have_tag('a', 'Details')
   end
   
-  it "should pass additional options on to the named route helper" do
+  it "should allow specifying additional parameters to be sent via the :sending option" do
+    @view.should_receive(:table_path).with(@table, :my_param => 'my_value').and_return('/table/1?my_param=my_value')
+    markup = @view.show_table(@table, :sending => {:my_param => 'my_value'})
+    markup.should have_tag('a[href=/table/1?my_param=my_value]')
+  end 
+  
+  it "should allow specifying additional parameters to be sent via the :parameters option (legacy)" do
     @view.should_receive(:table_path).with(@table, :my_param => 'my_value').and_return('/table/1?my_param=my_value')
     markup = @view.show_table(@table, :parameters => {:my_param => 'my_value'})
     markup.should have_tag('a[href=/table/1?my_param=my_value]')
+  end
+  
+  it "should issue a deprecation warning when specifying parameters via :parameters" do
+    ResourcefulViews.should_receive(:deprecation_warning)
+    @view.show_table(@table, :parameters => {:my_param => 'my_value'})
   end
   
   it "should allow for setting the title attribute of the link via the :title option" do

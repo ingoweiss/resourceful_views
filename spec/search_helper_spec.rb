@@ -49,9 +49,19 @@ describe 'search_resource with plural resource' do
     markup.should have_tag('button[title=Click to search]')
   end
   
+  it "should allow for submitting additional parameters via the :sending option" do
+    markup = @view.search_tables(:sending => {:order_by => 'name'})
+    markup.should have_tag('input[type=hidden][name=order_by][value=name]')
+  end
+  
   it "should allow for submitting additional parameters via the :parameters option" do
     markup = @view.search_tables(:parameters => {:order_by => 'name'})
     markup.should have_tag('input[type=hidden][name=order_by][value=name]')
+  end
+  
+  it "should issue a deprecation warning when submitting additional parameters via the :parameters option" do
+    ResourcefulViews.should_receive(:deprecation_warning)
+    @view.search_tables(:parameters => {:order_by => 'name'})
   end
   
 end
@@ -93,7 +103,15 @@ describe 'search_resource with plural resource and block' do
     _erbout.should_not have_tag('input[type=text][name=query]')
   end
   
-  it "should allow for submitting additional parameters via the :parameters option" do
+  it "should allow for submitting additional parameters via the :sending option" do
+    _erbout = ''
+    @view.search_tables(:sending => {:order_by => 'name'}) do
+       _erbout << 'some-content'
+    end
+    _erbout.should have_tag('input[type=hidden][name=order_by][value=name]')
+  end
+  
+  it "should allow for submitting additional parameters via the :parameters option (legacy)" do
     _erbout = ''
     @view.search_tables(:parameters => {:order_by => 'name'}) do
        _erbout << 'some-content'
@@ -101,6 +119,13 @@ describe 'search_resource with plural resource and block' do
     _erbout.should have_tag('input[type=hidden][name=order_by][value=name]')
   end
   
+  it "should issue a deprecation_warning when submitting additional parameters via the :parameters option" do
+    _erbout = ''
+    ResourcefulViews.should_receive(:deprecation_warning)
+    @view.search_tables(:parameters => {:order_by => 'name'}) do
+       # somthing
+    end
+  end
 
 end
 

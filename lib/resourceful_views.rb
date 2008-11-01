@@ -106,7 +106,7 @@ class ResourcefulViews
   #     <button type="submit">Search</button>
   #   </form>
   #
-  #   <%= search_tables(:label => 'Find', :parameters => {:order => 'material'}) %>
+  #   <%= search_tables(:label => 'Find', :sending => {:order => 'material'}) %>
   # 
   #   renders:
   # 
@@ -116,7 +116,7 @@ class ResourcefulViews
   #     <button type="submit">Find</button>
   #   </form>
   #
-  #   <% search_table_legs(table, :parameters => {:order => 'price'}) do %>
+  #   <% search_table_legs(table, :sending => {:order => 'price'}) do %>
   #     <%= select_tag 'filter', '<option>wood</option><option>metal</option>', :id => false %>
   #     <%= submit_button 'Search' %>
   #   <% end %>
@@ -138,7 +138,8 @@ class ResourcefulViews
         opts = args.extract_options!
         opts[:class] = ResourcefulViews.resourceful_classnames('#{resource.plural}', 'search', *(opts.delete(:class) || '').split)
         opts[:method] = :get
-        parameters = opts.delete(:parameters) || {}
+        opts[:sending] = opts.delete(:parameters) and ResourcefulViews.deprecation_warning('Please use :sending instead of :parameters') if opts[:parameters]
+        parameters = opts.delete(:sending) || {}
         if block_given?
           concat(form_tag(#{resource.name_prefix}#{resource.plural}_path(*args), opts), block.binding)
             parameters.collect{ |key, value|
@@ -189,7 +190,8 @@ class ResourcefulViews
         opts = args.extract_options!
         label = opts.delete(:label) || 'Show'
         opts[:class] = ResourcefulViews.resourceful_classnames('#{resource.singular}', 'show', *(opts.delete(:class) || '').split)
-        args << opts.delete(:parameters) if opts[:parameters]
+        opts[:sending] = opts.delete(:parameters) and ResourcefulViews.deprecation_warning('Please use :sending instead of :parameters') if opts[:parameters]
+        args << opts.delete(:sending) if opts[:sending]
         link_to(label, #{resource.name_prefix}#{resource.singular}_path(*args), opts)
       end
     end_eval
@@ -233,7 +235,8 @@ class ResourcefulViews
       def #{helper_name}(*args, &block)
         opts = args.extract_options!
         opts[:class] = ResourcefulViews.resourceful_classnames('#{resource.singular}', 'new', *(opts.delete(:class) || '').split)
-        parameters = opts.delete(:parameters) || {}
+        opts[:sending] = opts.delete(:parameters) and ResourcefulViews.deprecation_warning('Please use :sending instead of :parameters') if opts[:parameters]
+        parameters = opts.delete(:sending) || {}
         opts[:with] = opts.delete(:attributes) and ResourcefulViews.deprecation_warning('Please use :with instead of :attributes') if opts[:attributes]
         resource_attributes = opts.delete(:with) || {}
         parameters.merge!(resource_attributes.inject({}){|attributes, (key, value)| attributes['#{resource.singular}[' + key.to_s + ']'] = value; attributes}) if resource_attributes

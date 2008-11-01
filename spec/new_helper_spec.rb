@@ -43,7 +43,13 @@ describe 'new_resource with plural resource' do
     markup.should have_tag('a[title=Click to create new]')
   end
   
-  it "should support :parameters option" do
+  it "should allow specifying additional parameters to be sent via the :sending option" do
+    @view.should_receive(:new_table_path).with(:my_param => 'my_value').and_return('/tables/new?my_param=my_value')
+    markup = @view.new_table(:sending => {:my_param => 'my_value'})
+    markup.should have_tag('a[href=/tables/new?my_param=my_value]')
+  end
+  
+  it "should allow specifying additional parameters to be sent via the :parameters option" do
     @view.should_receive(:new_table_path).with(:my_param => 'my_value').and_return('/tables/new?my_param=my_value')
     markup = @view.new_table(:parameters => {:my_param => 'my_value'})
     markup.should have_tag('a[href=/tables/new?my_param=my_value]')
@@ -72,6 +78,7 @@ describe 'new_resource with plural resource' do
   end
 
 end
+
 
 describe 'new_resource with plural resource and block' do
   
@@ -108,13 +115,31 @@ describe 'new_resource with plural resource and block' do
     _erbout.should have_tag('form[method=get][action=/tables/new]')
   end     
   
-  it "should support :parameters option" do
+  it "should allow specifying additional parameters to be sent via the :sending option" do
     _erbout = ''
-    @view.new_table(:parameters => {:my_param => 'my_value'}) do
+    @view.new_table :sending => {:my_param => 'my_value'} do
        _erbout << 'some-content'
     end
     _erbout.should have_tag('form.new_table') do
        with_tag('input[type=hidden][name=my_param][value=my_value]')
+    end
+  end
+  
+  it "should allow specifying additional parameters to be sent via the :parameters option (legacy)" do
+    _erbout = ''
+    @view.new_table :parameters => {:my_param => 'my_value'} do
+       _erbout << 'some-content'
+    end
+    _erbout.should have_tag('form.new_table') do
+       with_tag('input[type=hidden][name=my_param][value=my_value]')
+    end
+  end
+  
+  it "should issue a deprecation warning when specifying additional parameters the :parameters option" do
+    ResourcefulViews.should_receive(:deprecation_warning)
+    _erbout = ''
+    @view.new_table :parameters => {:my_param => 'my_value'} do
+       # something
     end
   end
   
@@ -263,8 +288,7 @@ describe 'new_resource for singular nested resource' do
     markup = @view.new_table_top(@table, :parameters => {:my_param => 'my_value'})
     markup.should have_tag('a[href=/tables/1/top/new?my_param=my_value]')
   end
-  
-  
+    
 end
 
 

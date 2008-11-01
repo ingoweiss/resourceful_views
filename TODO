@@ -1,0 +1,4 @@
+* Test for support for custom form builders
+* Find way to add to _erbout that works in both Rails 2.1 and 2.2 (try <<)
+* Think about support for custom member/collection routes
+* Refactor to make code more DRY, rely less on giant string evaluations and to make it more hackable
