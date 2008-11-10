@@ -29,6 +29,13 @@ describe 'show_resource with plural resource' do
     markup.should have_tag('a[href=/tables/1]')
   end
   
+  it "should pass :anchor option on to the named route helper" do
+    pending
+    @view.should_receive(:table_path).with(@table, :anchor => 'special').and_return('/tables/1#special')
+    markup = @view.show_table(@table, :anchor => 'special')
+    markup.should have_tag('a[href=/tables/1#special]')
+  end
+  
   it "should have the label 'Show' by default" do
     markup = @view.show_table(@table)
     markup.should have_tag('a', 'Show')
