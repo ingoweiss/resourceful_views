@@ -182,13 +182,13 @@ class ResourcefulViews
   # 
   #   <a href="/tables/1" class="show table show_table">Linoleum</a>
   #
-  def build_show_helper(resource)
+  def build_show_helper(resource) 
     helper_name = "show_#{resource.name_prefix}#{resource.singular}#{@@link_helpers_suffix}"
     return if already_defined?(helper_name)
     @module.module_eval <<-end_eval
       def #{helper_name}(*args)
         opts = args.extract_options!
-        label = opts.delete(:label) || 'Show'
+        label = opts.delete(:label) || #{resource.kind_of?(ActionController::Resources::SingletonResource) ? "'Show'" : 'args.last.to_s'}
         opts[:class] = ResourcefulViews.resourceful_classnames('#{resource.singular}', 'show', *(opts.delete(:class) || '').split)
         opts[:sending] = opts.delete(:parameters) and ResourcefulViews.deprecation_warning('Please use :sending instead of :parameters') if opts[:parameters]
         args << opts.delete(:sending) if opts[:sending]
