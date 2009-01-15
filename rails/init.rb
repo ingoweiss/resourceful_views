@@ -1,0 +1,1 @@
+require 'resourceful_views'
